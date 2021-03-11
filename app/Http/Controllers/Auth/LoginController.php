@@ -41,6 +41,7 @@ class LoginController extends Controller
 
     protected function credentials(Request $request): array
     {
-        return $request->merge(['is_admin' => 1])->only($this->username(), 'password', 'is_admin');
+        return $request->merge(['is_admin' => 1, 'active' => 1])
+            ->only($this->username(), 'password', 'is_admin', 'active');
     }
 }

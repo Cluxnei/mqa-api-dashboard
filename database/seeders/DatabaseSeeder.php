@@ -18,6 +18,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        User::query()->create([
+            'name' => 'Developer Master',
+            'email' => 'dev@dev.dev',
+            'cpf' => '00000000000',
+            'phone' => '00000000000',
+            'is_admin' => 1,
+            'active' => 1,
+            'password' => bcrypt('dev'),
+        ]);
         $users = User::factory()->count(100)->create();
         $units = Unit::factory()->count(100)->create();
         $foods = Food::factory()->count(100)->create();

@@ -26,6 +26,10 @@ Route::middleware('auth')->name('dashboard.')->prefix('dashboard')->group(static
     Route::resources([
         'users' => UserController::class,
     ]);
+    Route::name('users.')->prefix('/users')->group(static function() {
+        Route::get('/users/active/{user}', [UserController::class, 'active'])->name('active');
+        Route::get('/users/inactive/{user}', [UserController::class, 'inactive'])->name('inactive');
+    });
 });
 
 

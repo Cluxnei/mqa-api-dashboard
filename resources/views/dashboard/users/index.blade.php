@@ -3,74 +3,55 @@
 @section('title', 'Mqa Adm')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">{{ __('users') }}</h1>
+    <h1 class="m-0">{{ __('users') }}</h1>
 @stop
 
 @section('content')
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card bg-dark">
                 <div class="card-header">
-                    <h3 class="card-title">Responsive Hover Table</h3>
-
-                    <div class="card-tools">
-                        <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" name="table_search" class="form-control float-right"
-                                   placeholder="Search">
-
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <h3 class="card-title">{{ __('total users') }}</h3>
                 </div>
-                <!-- /.card-header -->
                 <div class="card-body table-responsive p-0">
-                    <table class="table table-hover text-nowrap">
+                    <table class="table table-hover table-dark text-nowrap table-with-sort">
                         <thead>
                         <tr>
-                            <th>#</th>
-                            <th>{{ __('name') }}</th>
-                            <th>{{ __('email') }}</th>
-                            <th>{{ __('phone') }}</th>
-                            <th>{{ __('cpf') }}</th>
-                            <th>{{ __('created_at') }}</th>
+                            <th></th>
+                            <th {!! $paginator('id')->full !!}>id</th>
+                            <th {!! $paginator('name')->full !!}>{{ __('name') }}</th>
+                            <th {!! $paginator('email')->full !!}>{{ __('email') }}</th>
+                            <th {!! $paginator('phone')->full !!}>{{ __('phone') }}</th>
+                            <th {!! $paginator('cpf')->full !!}>{{ __('cpf') }}</th>
+                            <th {!! $paginator('created_at')->full !!}>{{ __('created_at') }}</th>
+                            <th {!! $paginator('companies_count')->full !!}>{{ __('companies') }}</th>
+                            <th {!! $paginator('is_admin')->full !!}>{{ __('is admin') }}</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($users as $user)
                             <tr>
+                                <td>
+                                    <a href="{{ route('dashboard.users.show', $user->id) }}" class="btn btn-pink">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
                                 <td>{{ $user->id }}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->phone }}</td>
                                 <td>{{ $user->cpf }}</td>
                                 <td>{{ $user->created_at }}</td>
+                                <td>{{ $user->companies_count }}</td>
+                                <td>{{ __($user->is_admin ? 'yes' : 'no') }}</td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>
                 <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0">
-                        @unless($users->currentPage() === 1)
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ $users->currentPage() - 1 }}">«</a>
-                            </li>
-                        @endunless
-                        @for($i = 1; $i <= $users->lastPage(); $i++)
-                            <li class="page-item {{$i === $users->currentPage() ? 'active' : ''}}"><a class="page-link" href="?page={{ $i }}">{{ $i }}</a></li>
-                        @endfor
-                        @unless($users->currentPage() === $users->lastPage())
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ $users->currentPage() + 1 }}">»</a>
-                            </li>
-                        @endunless
-                    </ul>
+                    {{ $users->links() }}
                 </div>
-                <!-- /.card-body -->
             </div>
         </div>
     </div>

@@ -36837,7 +36837,7 @@ a.text-muted:hover {
   --blue: #3490dc;
   --indigo: #6574cd;
   --purple: #9561e2;
-  --pink: #f66d9b;
+  --pink: #d81b60;
   --red: #e3342f;
   --orange: #f6993f;
   --yellow: #ffed4a;
@@ -37359,7 +37359,7 @@ mark,
 
 code {
   font-size: 87.5%;
-  color: #f66d9b;
+  color: #d81b60;
   word-wrap: break-word;
 }
 
@@ -47765,6 +47765,95 @@ a.text-dark:focus {
     color: inherit;
     border-color: #dee2e6;
   }
+}
+
+.dark-body,
+.dark-content {
+  background-color: #313131;
+  color: white;
+}
+
+.dark-content-header {
+  color: white;
+}
+
+.navbar-dark {
+  border-bottom-color: red;
+}
+
+.table-with-sort thead .sortable {
+  position: relative;
+  cursor: pointer;
+}
+
+.table-with-sort thead .sortable::after,
+.table-with-sort thead .sortable::before {
+  position: absolute;
+  bottom: 0.9em;
+  display: block;
+}
+
+.table-with-sort thead .sortable::after {
+  content: "↑";
+  right: 1em;
+  opacity: 1;
+}
+
+.table-with-sort thead .sortable::before {
+  content: "↓";
+  right: 0.5em;
+  opacity: 0.3;
+}
+
+.table-with-sort thead .sortable-active {
+  font-weight: bold;
+  color: #d81b60;
+}
+
+.table-with-sort thead .sortable-active::after,
+.table-with-sort thead .sortable-active::before {
+  color: white;
+}
+
+.table-with-sort thead .sort-desc::before {
+  opacity: 1;
+}
+
+.table-with-sort thead .sort-desc::after {
+  opacity: 0.3;
+}
+
+.pagination .page-link {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  color: #ffffff;
+  background-color: #343633;
+  border: 1px solid #dee2e6;
+}
+
+.page-item.active .page-link {
+  background-color: #d81b60;
+  border-color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+  cursor: not-allowed;
+  background-color: #343229;
+}
+
+.btn-pink {
+  background-color: #d81b60;
+  color: white;
+  transition: scale 400ms ease-in-out;
+}
+
+.btn-pink:hover {
+  background-color: #db5180;
+  transform: scale(1.1);
+  color: white;
 }
 
 

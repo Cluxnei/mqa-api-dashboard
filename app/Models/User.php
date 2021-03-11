@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -14,6 +15,20 @@ use Laravel\Passport\HasApiTokens;
  * Class User
  * @package App\Models
  * @method static Builder admin()
+ * @property int id
+ * @property int is_admin
+ * @property int active
+ * @property string name
+ * @property string cpf
+ * @property string phone
+ * @property string email
+ * @property string password
+ * @property string remember_token
+ * @property string|Carbon email_verified_at
+ * @property string|Carbon phone_verified_at
+ * @property string|Carbon created_at
+ * @property string|Carbon updated_at
+ * @property string|Carbon deleted_at
  */
 class User extends Authenticatable
 {
@@ -26,6 +41,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'is_admin',
+        'active',
         'name',
         'cpf',
         'phone',
@@ -63,6 +79,10 @@ class User extends Authenticatable
 
     final public function isAdmin(): bool {
         return (int)$this->is_admin === 1;
+    }
+
+    final public function isActive(): bool {
+        return (int)$this->active === 1;
     }
 
     final public function scopeAdmin(Builder $builder): Builder {

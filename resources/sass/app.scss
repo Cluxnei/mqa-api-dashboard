@@ -14,3 +14,85 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
+.dark-body, .dark-content {
+  background-color: #313131;
+  color: white;
+}
+
+.dark-content-header {
+  color: white;
+}
+
+.navbar-dark {
+  border-bottom-color: red;
+}
+
+.table-with-sort thead {
+  .sortable {
+    position: relative;
+    cursor: pointer;
+    &::after, &::before {
+      position: absolute;
+      bottom: 0.9em;
+      display: block;
+    }
+    &::after {
+      content: "\2191";
+      right: 1em;
+      opacity: 1;
+    }
+    &::before {
+      content: "\2193";
+      right: 0.5em;
+      opacity: 0.3;
+    }
+  }
+  .sortable-active {
+    font-weight: bold;
+    color: $pink;
+    &::after, &::before {
+      color: white;
+    }
+  }
+}
+
+.table-with-sort thead .sort-desc {
+  &::before {
+    opacity: 1;
+  }
+  &::after {
+    opacity: 0.3;
+  }
+}
+
+.pagination .page-link {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  color: #ffffff;
+  background-color: #343633;
+  border: 1px solid #dee2e6;
+}
+
+.page-item.active .page-link {
+  background-color: $pink;
+  border-color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+  cursor: not-allowed;
+  background-color: #343229;
+}
+
+.btn-pink {
+  background-color: $pink;
+  color: white;
+  transition: scale 400ms ease-in-out;
+  &:hover {
+    background-color: $dark-pink;
+    transform: scale(1.1);
+    color: white;
+  }
+}
