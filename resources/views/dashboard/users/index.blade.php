@@ -23,7 +23,6 @@
                             <th {!! $paginator('email')->full !!}>{{ __('email') }}</th>
                             <th {!! $paginator('phone')->full !!}>{{ __('phone') }}</th>
                             <th {!! $paginator('cpf')->full !!}>{{ __('cpf') }}</th>
-                            <th {!! $paginator('created_at')->full !!}>{{ __('created_at') }}</th>
                             <th {!! $paginator('companies_count')->full !!}>{{ __('companies') }}</th>
                             <th {!! $paginator('is_admin')->full !!}>{{ __('is admin') }}</th>
                         </tr>
@@ -41,7 +40,6 @@
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->phone }}</td>
                                 <td>{{ $user->cpf }}</td>
-                                <td>{{ $user->created_at }}</td>
                                 <td>{{ $user->companies_count }}</td>
                                 <td>{{ __($user->is_admin ? 'yes' : 'no') }}</td>
                             </tr>

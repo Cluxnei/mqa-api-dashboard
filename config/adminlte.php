@@ -225,9 +225,19 @@ return [
 
     'menu' => [
         [
+            'text' => 'dashboard',
+            'url' => 'dashboard',
+            'icon' => 'fas fa-fw fa-tachometer-alt',
+        ],
+        [
             'text' => 'users',
-            'url'  => 'dashboard/users',
+            'url' => 'dashboard/users',
             'icon' => 'fas fa-fw fa-users',
+        ],
+        [
+            'text' => 'companies',
+            'url' => 'dashboard/companies',
+            'icon' => 'fas fa-fw fa-building',
         ],
     ],
 

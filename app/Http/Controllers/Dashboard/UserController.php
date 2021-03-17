@@ -18,7 +18,7 @@ class UserController extends Controller
         $builder = User::query()->withCount('companies');
         $users = PaginationService::paginateEloquentResults($request, $builder, self::USERS_PER_PAGE, [
             'sort' => 'desc',
-            'sortKey' => 'is_admin',
+            'sortKey' => 'created_at',
         ]);
         $paginator = PaginationService::withSortKeys($users);
         return view('dashboard.users.index', compact('users', 'paginator'));

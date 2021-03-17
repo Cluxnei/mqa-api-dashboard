@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\CompanyController;
 use App\Http\Controllers\Dashboard\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -25,10 +26,15 @@ Route::middleware('auth')->name('dashboard.')->prefix('dashboard')->group(static
     Route::get('/', [App\Http\Controllers\Dashboard\HomeController::class, 'index'])->name('home');
     Route::resources([
         'users' => UserController::class,
+        'companies' => CompanyController::class,
     ]);
-    Route::name('users.')->prefix('/users')->group(static function() {
-        Route::get('/users/active/{user}', [UserController::class, 'active'])->name('active');
-        Route::get('/users/inactive/{user}', [UserController::class, 'inactive'])->name('inactive');
+    Route::name('users.')->prefix('/users')->group(static function () {
+        Route::get('/active/{user}', [UserController::class, 'active'])->name('active');
+        Route::get('/inactive/{user}', [UserController::class, 'inactive'])->name('inactive');
+    });
+    Route::name('companies.')->prefix('/companies')->group(static function () {
+        Route::get('/active/{company}', [CompanyController::class, 'active'])->name('active');
+        Route::get('/inactive/{company}', [CompanyController::class, 'inactive'])->name('inactive');
     });
 });
 

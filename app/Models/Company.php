@@ -14,6 +14,7 @@ class Company extends Model
     protected $table = 'companies';
 
     protected $fillable = [
+        'active',
         'name',
         'cnpj',
         'zipcode',
@@ -59,6 +60,11 @@ class Company extends Model
             ->wherePivot('type', '=', 'available')
             ->withTimestamps();
         return !$withTrashed ? $builder->wherePivotNull('deleted_at') : $builder;
+    }
+
+    final public function isActive(): bool
+    {
+        return (int)$this->active === 1;
     }
 
 }

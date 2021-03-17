@@ -15,6 +15,7 @@ class CreateCompaniesTable extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
+            $table->boolean('active')->default(1);
             $table->string('name');
             $table->string('cnpj')->unique();
             $table->string('zipcode');
