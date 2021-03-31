@@ -1,0 +1,1 @@
+{{ __('your verification code is') }} <b>{{ $verificationCode }}</b>

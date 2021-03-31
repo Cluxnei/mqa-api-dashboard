@@ -18,6 +18,8 @@ class CreateCompaniesTable extends Migration
             $table->boolean('active')->default(1);
             $table->string('name');
             $table->string('cnpj')->unique();
+            $table->string('phone');
+            $table->string('email');
             $table->string('zipcode');
             $table->string('street');
             $table->string('neighborhood');

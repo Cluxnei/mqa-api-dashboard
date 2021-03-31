@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\CompanyController;
+use App\Http\Controllers\Dashboard\FoodController;
 use App\Http\Controllers\Dashboard\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,7 @@ Route::middleware('auth')->name('dashboard.')->prefix('dashboard')->group(static
     Route::resources([
         'users' => UserController::class,
         'companies' => CompanyController::class,
+        'foods' => FoodController::class,
     ]);
     Route::name('users.')->prefix('/users')->group(static function () {
         Route::get('/active/{user}', [UserController::class, 'active'])->name('active');

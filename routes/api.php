@@ -1,13 +1,19 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\api\CompanyController;
+use App\Http\Controllers\Api\CompanyController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [AuthController::class, 'login']);
-
-Route::middleware('auth:api')->group(static function () {
-    Route::apiResources([
-        'company' => CompanyController::class,
-    ]);
+Route::prefix('v1')->group(static function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/email-confirmation', [AuthController::class, 'emailConfirmation']);
+    Route::post('/email-code-verification', [AuthController::class, 'emailCodeVerification']);
+    Route::post('/registration', [AuthController::class, 'registration']);
+    Route::middleware('auth:api')->group(static function () {
+        Route::post('get-company-data', [CompanyController::class, 'getData']);
+        Route::apiResources([
+            'company' => CompanyController::class,
+        ]);
+    });
 });
+

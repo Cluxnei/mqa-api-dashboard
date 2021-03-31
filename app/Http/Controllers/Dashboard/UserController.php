@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Events\UserActivated;
+use App\Events\UserInactivated;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\PaginationService;
@@ -33,12 +35,14 @@ class UserController extends Controller
     final public function active(User $user): RedirectResponse
     {
         $user->update(['active' => 1]);
+        event(new UserActivated($user));
         return redirect()->route('dashboard.users.show', $user->id);
     }
 
     final public function inactive(User $user): RedirectResponse
     {
         $user->update(['active' => 0]);
+        event(new UserInactivated($user));
         return redirect()->route('dashboard.users.show', $user->id);
     }
 }

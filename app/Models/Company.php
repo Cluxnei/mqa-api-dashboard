@@ -17,6 +17,8 @@ class Company extends Model
         'active',
         'name',
         'cnpj',
+        'phone',
+        'email',
         'zipcode',
         'street',
         'neighborhood',
@@ -25,7 +27,7 @@ class Company extends Model
         'state',
         'country',
         'latitude',
-        'longitude',
+        'longitude'
     ];
 
     final public function users(bool $withTrashed = false): BelongsToMany

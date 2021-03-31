@@ -27,6 +27,8 @@ class CompanyFactory extends Factory
             'name' => $this->faker->name,
             'cnpj' => $this->faker->unique()->numerify('##############'),
             'zipcode' => $this->faker->numerify('########'),
+            'email' => $this->faker->email,
+            'phone' => $this->faker->numerify('###########'),
             'street' => $this->faker->streetName,
             'neighborhood' => implode(' ', $this->faker->words(3)),
             'address_number' => $this->faker->buildingNumber,

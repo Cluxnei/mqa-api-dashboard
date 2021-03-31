@@ -25,11 +25,11 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'is_admin' => random_int(0, 1),
+            'is_admin' => random_int(0, 30) === 7 ? 1 : 0,
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->email,
             'cpf' => $this->faker->unique()->numerify('###########'),
-            'phone' =>  $this->faker->unique()->numerify('###########'),
+            'phone' => $this->faker->unique()->numerify('###########'),
             'email_verified_at' => now(),
             'phone_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password

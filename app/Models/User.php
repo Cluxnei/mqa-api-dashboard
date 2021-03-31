@@ -73,20 +73,28 @@ class User extends Authenticatable
     {
         $builder = $this->belongsToMany(Company::class, 'users_companies', 'user_id', 'company_id')
             ->withPivot('deleted_at')
-                ->withTimestamps();
+            ->withTimestamps();
         return !$withTrashed ? $builder->wherePivotNull('deleted_at') : $builder;
     }
 
-    final public function isAdmin(): bool {
+    final public function isAdmin(): bool
+    {
         return (int)$this->is_admin === 1;
     }
 
-    final public function isActive(): bool {
+    final public function isActive(): bool
+    {
         return (int)$this->active === 1;
     }
 
-    final public function scopeAdmin(Builder $builder): Builder {
+    final public function scopeAdmin(Builder $builder): Builder
+    {
         return $builder->where('is_admin', '=', 1);
+    }
+
+    final public function scopeActive(Builder $builder, bool $active = true): Builder
+    {
+        return $builder->where('active', '=', $active ? 1 : 0);
     }
 
 
