@@ -4,8 +4,8 @@
 namespace App\Services;
 
 
+use Exception;
 use GuzzleHttp\Client;
-use Throwable;
 
 class GeoLocationService
 {
@@ -28,16 +28,17 @@ class GeoLocationService
     public static function getAddressByZipcode(string $zipcode): ?array
     {
         try {
-            $zipcode = preg_replace('/\D/', '', $zipcode);
+            $zipcode = trim(preg_replace('/\D/', '', $zipcode));
             $token = env('CEP_ABERTO_TOKEN', '');
             $client = new Client([
                 'base_uri' => env('CEP_ABERTO_URL', ''),
-                'headers' => ['Authorization' => "Token token={$token}"]
+                'headers' => ['Authorization' => "Token token={$token}"],
+                'timeout' => 3,
             ]);
             $request = $client->get("/api/v3/cep?cep={$zipcode}");
             $response = (string)$request->getBody();
             return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
-        } catch (Throwable $th) {
+        } catch (Exception $th) {
             return null;
         }
     }

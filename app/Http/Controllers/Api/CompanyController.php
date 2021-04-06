@@ -8,39 +8,56 @@ use App\Http\Requests\GetCompanyDataRequest;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Resources\CompanyResource;
 use App\Services\GeoLocationService;
+use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use JsonException;
 
 class CompanyController extends Controller
 {
+    private function getCompanyDataByCnpj(string $cnpj): ?array
+    {
+        try {
+            $cnpj = trim(preg_replace('/\D/', '', $cnpj));
+            $client = new Client([
+                'base_uri' => env('RECEITA_URL', ''),
+                'timeout' => 3,
+            ]);
+            $request = $client->get("/v1/cnpj/{$cnpj}");
+            $response = (string)$request->getBody();
+            return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+        } catch (Exception $th) {
+            return null;
+        }
+    }
+
+    private function companyRelevantFields(): array
+    {
+        return ['nome', 'telefone', 'email', 'bairro', 'logradouro', 'numero', 'cep', 'municipio', 'fantasia', 'uf', 'cnpj', 'complemento'];
+    }
+
     /**
      * @param GetCompanyDataRequest $request
      * @return JsonResponse
-     * @throws JsonException
      */
     final public function getData(GetCompanyDataRequest $request): JsonResponse
     {
         $cnpj = trim(preg_replace('/\D/', '', $request->cnpj));
-        $data = file_get_contents("http://receitaws.com.br/v1/cnpj/{$cnpj}");
-        $parsed = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
-        if (!$parsed || $parsed['status'] !== 'OK') {
+        $companyData = $this->getCompanyDataByCnpj($cnpj);
+        if (null === $companyData || $companyData['status'] !== 'OK') {
             return response()->json(['success' => false, 'data' => null]);
         }
-        $parsed = collect($parsed)->only([
-            'nome', 'telefone', 'email', 'bairro', 'logradouro', 'numero',
-            'cep', 'municipio', 'fantasia', 'uf', 'cnpj', 'complemento'
-        ])->toArray();
-        if (isset($parsed['cep'])) {
-            $zipcode = trim(preg_replace('/\D/', '', $parsed['cep']));
+        $parsedCompanyData = collect($companyData)->only($this->companyRelevantFields())->toArray();
+        if (isset($parsedCompanyData['cep'])) {
+            $zipcode = trim(preg_replace('/\D/', '', $parsedCompanyData['cep']));
             $address = GeoLocationService::getAddressByZipcode($zipcode);
             if (is_array($address) && ($address['latitude'] ?? false) && ($address['longitude'] ?? false)) {
-                $parsed['latitude'] = (float)$address['latitude'];
-                $parsed['longitude'] = (float)$address['longitude'];
+                $parsedCompanyData['latitude'] = (float)$address['latitude'];
+                $parsedCompanyData['longitude'] = (float)$address['longitude'];
             }
         }
-        return response()->json(['success' => true, 'data' => $parsed]);
+        return response()->json(['success' => true, 'data' => $parsedCompanyData]);
     }
 
     /**
