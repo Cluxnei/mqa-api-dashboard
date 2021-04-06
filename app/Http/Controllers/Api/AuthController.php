@@ -32,6 +32,11 @@ class AuthController extends Controller
             return response()->json(['message' => 'Usuário em aprovação'], Response::HTTP_UNAUTHORIZED);
         }
         $token = $user->createToken('AuthToken');
+        $token = [
+            'accessToken' => $token->accessToken,
+            'expires_at' => $token->token->expires_at
+        ];
+        $user->load('companies');
         return response()->json(compact('user', 'token'));
     }
 
