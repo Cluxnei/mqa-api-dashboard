@@ -36,7 +36,18 @@ class AuthController extends Controller
             'accessToken' => $token->accessToken,
             'expires_at' => $token->token->expires_at
         ];
-        $user->load('companies');
+        $user->load([
+            'companies' => static function ($query) {
+                $query->with([
+                    'interestFoods' => static function ($query) {
+                        $query->with('units');
+                    },
+                    'availableFoods' => static function ($query) {
+                        $query->with('units');
+                    },
+                ]);
+            },
+        ]);
         return response()->json(compact('user', 'token'));
     }
 

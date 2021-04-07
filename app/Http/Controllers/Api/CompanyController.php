@@ -66,7 +66,15 @@ class CompanyController extends Controller
      */
     final public function index(Request $request): AnonymousResourceCollection
     {
-        return CompanyResource::collection($request->user()->companies()->get());
+        $companies = $request->user()->companies()->with([
+            'interestFoods' => static function ($query) {
+                $query->with('units');
+            },
+            'availableFoods' => static function ($query) {
+                $query->with('units');
+            },
+        ]);
+        return CompanyResource::collection($companies->get()->unique('id'));
     }
 
     /**
