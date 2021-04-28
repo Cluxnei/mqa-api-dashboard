@@ -2,11 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Class Food
+ * @package App\Models
+ * @method static Builder approved(bool $approved = true)
+ */
 class Food extends Model
 {
     use HasFactory, SoftDeletes;
@@ -26,5 +32,10 @@ class Food extends Model
             ->withPivot('deleted_at')
             ->withTimestamps();
         return !$withTrashed ? $builder->wherePivotNull('deleted_at') : $builder;
+    }
+
+    final public function scopeApproved(Builder $builder, bool $approved = true): Builder
+    {
+        return $builder->where('approved', '=', $approved ? 1 : 0);
     }
 }

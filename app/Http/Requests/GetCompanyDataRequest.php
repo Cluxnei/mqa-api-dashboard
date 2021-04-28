@@ -13,7 +13,7 @@ class GetCompanyDataRequest extends FormRequest
      */
     final public function authorize(): bool
     {
-        return auth()->check();
+        return auth()->guard('api')->check();
     }
 
     /**

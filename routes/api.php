@@ -14,6 +14,14 @@ Route::prefix('v1')->group(static function () {
         Route::apiResources([
             'company' => CompanyController::class,
         ]);
+        Route::post('/company/store-available-item/{company}', [
+            CompanyController::class,
+            'storeAvailableItem'
+        ]);
+        Route::post('/company/store-interest-item/{company}', [
+            CompanyController::class,
+            'storeInterestItem'
+        ]);
     });
 });
 

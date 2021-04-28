@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\ValidationException;
 
-class StoreCompanyRequest extends FormRequest
+class StoreCompanyItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,19 +27,9 @@ class StoreCompanyRequest extends FormRequest
     final public function rules(): array
     {
         return [
-            'name' => 'required|string|max:100',
-            'cnpj' => 'required|string|max:15|unique:companies',
-            'phone' => 'required|string|max:12',
-            'email' => 'required|email:rfc,dns',
-            'zipcode' => 'required|string|max:9',
-            'street' => 'required|string|max:255',
-            'neighborhood' => 'required|string|max:255',
-            'address_number' => 'required|string|max:20',
-            'city' => 'required|string|max:40',
-            'state' => 'required|string|max:30',
-            'country' => 'required|string|max:40',
-            'latitude' => 'numeric|nullable',
-            'longitude' => 'numeric|nullable',
+            'food_id' => 'required|numeric',
+            'unit_id' => 'required|numeric',
+            'amount' => 'required|numeric',
         ];
     }
 

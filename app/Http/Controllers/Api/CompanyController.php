@@ -5,17 +5,26 @@ namespace App\Http\Controllers\Api;
 use App\Events\CompanyCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GetCompanyDataRequest;
+use App\Http\Requests\StoreCompanyItemRequest;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Resources\CompanyResource;
+use App\Models\Company;
 use App\Services\GeoLocationService;
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class CompanyController extends Controller
 {
+
+    /**
+     * @param string $cnpj
+     * @return array|null
+     */
     private function getCompanyDataByCnpj(string $cnpj): ?array
     {
         try {
@@ -27,11 +36,14 @@ class CompanyController extends Controller
             $request = $client->get("/v1/cnpj/{$cnpj}");
             $response = (string)$request->getBody();
             return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
-        } catch (Exception $th) {
+        } catch (Exception | GuzzleException $th) {
             return null;
         }
     }
 
+    /**
+     * @return string[]
+     */
     private function companyRelevantFields(): array
     {
         return ['nome', 'telefone', 'email', 'bairro', 'logradouro', 'numero', 'cep', 'municipio', 'fantasia', 'uf', 'cnpj', 'complemento'];
@@ -98,5 +110,45 @@ class CompanyController extends Controller
                 . 'Fique tranquil' . ($request->user()->gender === 'F' ? 'a' : 'o')
                 . ', notificaremos atualizações por e-mail.'
         ]);
+    }
+
+    /**
+     * @param StoreCompanyItemRequest $request
+     * @param Company $company
+     * @return JsonResponse
+     */
+    final public function storeAvailableItem(StoreCompanyItemRequest $request, Company $company): JsonResponse
+    {
+        $company->availableFoods()->attach($request->food_id, [
+            'company_id' => $company->id,
+            'unit_id' => $request->unit_id,
+            'requested_by' => $request->user()->id,
+            'type' => 'available',
+            'amount' => $request->amount,
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => '',
+        ], Response::HTTP_CREATED);
+    }
+
+    /**
+     * @param StoreCompanyItemRequest $request
+     * @param Company $company
+     * @return JsonResponse
+     */
+    final public function storeInterestItem(StoreCompanyItemRequest $request, Company $company): JsonResponse
+    {
+        $company->availableFoods()->attach($request->food_id, [
+            'company_id' => $company->id,
+            'unit_id' => $request->unit_id,
+            'requested_by' => $request->user()->id,
+            'type' => 'interest',
+            'amount' => $request->amount,
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => '',
+        ], Response::HTTP_CREATED);
     }
 }

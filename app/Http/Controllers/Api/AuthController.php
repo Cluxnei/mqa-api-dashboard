@@ -9,6 +9,7 @@ use App\Http\Requests\EmailCodeVerificationRequest;
 use App\Http\Requests\EmailConfirmationRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrationRequest;
+use App\Models\Food;
 use App\Models\User;
 use App\Models\VerificationCode;
 use Exception;
@@ -48,6 +49,7 @@ class AuthController extends Controller
                 ]);
             },
         ]);
+        $user->setAttribute('foods', Food::approved()->with('units')->get());
         return response()->json(compact('user', 'token'));
     }
 
