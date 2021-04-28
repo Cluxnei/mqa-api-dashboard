@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class Company extends Model
 {
@@ -67,6 +69,18 @@ class Company extends Model
     final public function isActive(): bool
     {
         return (int)$this->active === 1;
+    }
+
+    final public function compatibleDonations(?\Illuminate\Database\Eloquent\Collection $availableFoods = null): Collection
+    {
+        if (null === $availableFoods) {
+            $availableFoods = $this->availableFoods()->get();
+        }
+        return DB::table('companies_foods')->where('type', '=', 'interest')
+            ->whereIn('food_id', $availableFoods->pluck('id'))
+//            ->whereIn('unit_id', $availableFoods->pluck('pivot.unit_id'))
+//            ->where('amount', '<=', $this->availableFoods()->max('amount') ?? 0)
+            ->get();
     }
 
 }

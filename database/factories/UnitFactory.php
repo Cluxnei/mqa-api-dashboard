@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 class UnitFactory extends Factory
 {
+    private const UNITS_NAMES = ['Kilogramas', 'Unidades', 'Gramas', 'Litros', 'Toneladas'];
     /**
      * The name of the factory's corresponding model.
      *
@@ -24,7 +25,7 @@ class UnitFactory extends Factory
      */
     public function definition(): array
     {
-        $unit = $this->faker->unique()->word;
+        $unit = $this->faker->unique()->randomElement(self::UNITS_NAMES);
         return [
             'unit' => $unit,
             'slug' => Str::slug($unit),

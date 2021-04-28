@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FoodFactory extends Factory
 {
+    private const FOOD_NAMES = ['Banana', 'Melancia', 'Arroz', 'Macarrao', 'Alface', 'Tomate', 'Batata', 'Feijao', 'Pera', 'Leite', 'Grao de Bico'];
     /**
      * The name of the factory's corresponding model.
      *
@@ -26,7 +27,7 @@ class FoodFactory extends Factory
     {
         $approved = (bool)random_int(0, 1);
         return [
-            'name' => $this->faker->unique()->name,
+            'name' => $this->faker->unique()->randomElement(self::FOOD_NAMES),
             'approved' => $approved,
             'approved_by' => $approved
                 ? User::admin()->inRandomOrder()->limit(1)->first()->id

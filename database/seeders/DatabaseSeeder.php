@@ -27,22 +27,22 @@ class DatabaseSeeder extends Seeder
             'active' => 1,
             'password' => bcrypt('dev'),
         ]);
-        $users = User::factory()->count(100)->create();
-        $units = Unit::factory()->count(100)->create();
-        $foods = Food::factory()->count(100)->create();
-        $companies = Company::factory()->count(100)->create();
+        $users = User::factory()->count(10)->create();
+        $units = Unit::factory()->count(5)->create();
+        $foods = Food::factory()->count(10)->create();
+        $companies = Company::factory()->count(10)->create();
 
         $foods->each(static function (Food $food) use ($units) {
-            $units->random(random_int(0, 3))->each(static function (Unit $unit) use ($food) {
+            $units->each(static function (Unit $unit) use ($food) {
                 $food->units()->attach($unit->id);
             });
         });
 
         $companies->each(static function (Company $company) use ($foods, $users) {
-            $users->random(random_int(0, 4))->each(static function (User $user) use ($company) {
+            $users->random(random_int(1, 4))->each(static function (User $user) use ($company) {
                 $company->users()->attach($user->id);
             });
-            $foods->random(random_int(0, 4))->each(static function (Food $food) use ($company) {
+            $foods->each(static function (Food $food) use ($company) {
                 $unit = $food->units(true)->inRandomOrder()->limit(1)->first();
                 $user = $company->users(true)->inRandomOrder()->limit(1)->first();
                 if (null === $unit || null === $user) {

@@ -151,4 +151,25 @@ class CompanyController extends Controller
             'message' => '',
         ], Response::HTTP_CREATED);
     }
+
+    /**
+     * @param Company $company
+     * @return JsonResponse
+     */
+    final public function closestCompatibleDonations(Company $company): JsonResponse
+    {
+        $company->load('availableFoods');
+        $donations = $company->compatibleDonations();
+        $companies = Company::with(['interestFoods' => static function ($query) use ($donations) {
+            $query->whereIn('companies_foods.id', $donations->pluck('id'));
+        }])->whereIn('id', $donations->pluck('company_id'))->get()
+            ->map(static function (Company $c) use ($company) {
+                $distance = GeoLocationService::distanceBetweenTowCoordinates(
+                    $c->latitude, $c->longitude, $company->latitude, $company->longitude
+                );
+                $c->setAttribute('distanceInKilometers', $distance);
+                return $c;
+            })->sortBy('distanceInKilometers');
+        return response()->json($companies->values());
+    }
 }
