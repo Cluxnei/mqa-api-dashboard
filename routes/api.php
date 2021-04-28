@@ -23,6 +23,7 @@ Route::prefix('v1')->group(static function () {
             'storeInterestItem'
         ]);
         Route::get('/company/closest-compatible-donations/{company}', [CompanyController::class, 'closestCompatibleDonations']);
+        Route::get('/company/closest-compatible-receptions/{company}', [CompanyController::class, 'closestCompatibleReceptions']);
     });
 });
 

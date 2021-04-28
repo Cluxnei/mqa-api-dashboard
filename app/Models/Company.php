@@ -32,6 +32,10 @@ class Company extends Model
         'longitude'
     ];
 
+    /**
+     * @param bool $withTrashed
+     * @return BelongsToMany
+     */
     final public function users(bool $withTrashed = false): BelongsToMany
     {
         $builder = $this->belongsToMany(User::class, 'users_companies', 'company_id', 'user_id')
@@ -40,6 +44,10 @@ class Company extends Model
         return !$withTrashed ? $builder->wherePivotNull('deleted_at') : $builder;
     }
 
+    /**
+     * @param bool $withTrashed
+     * @return BelongsToMany
+     */
     final public function foods(bool $withTrashed = false): BelongsToMany
     {
         $builder = $this->belongsToMany(Food::class, 'companies_foods', 'company_id', 'food_id')
@@ -48,6 +56,10 @@ class Company extends Model
         return !$withTrashed ? $builder->wherePivotNull('deleted_at') : $builder;
     }
 
+    /**
+     * @param bool $withTrashed
+     * @return BelongsToMany
+     */
     final public function interestFoods(bool $withTrashed = false): BelongsToMany
     {
         $builder = $this->belongsToMany(Food::class, 'companies_foods', 'company_id', 'food_id')
@@ -57,6 +69,10 @@ class Company extends Model
         return !$withTrashed ? $builder->wherePivotNull('deleted_at') : $builder;
     }
 
+    /**
+     * @param bool $withTrashed
+     * @return BelongsToMany
+     */
     final public function availableFoods(bool $withTrashed = false): BelongsToMany
     {
         $builder = $this->belongsToMany(Food::class, 'companies_foods', 'company_id', 'food_id')
@@ -66,11 +82,18 @@ class Company extends Model
         return !$withTrashed ? $builder->wherePivotNull('deleted_at') : $builder;
     }
 
+    /**
+     * @return bool
+     */
     final public function isActive(): bool
     {
         return (int)$this->active === 1;
     }
 
+    /**
+     * @param \Illuminate\Database\Eloquent\Collection|null $availableFoods
+     * @return Collection
+     */
     final public function compatibleDonations(?\Illuminate\Database\Eloquent\Collection $availableFoods = null): Collection
     {
         if (null === $availableFoods) {
@@ -78,8 +101,20 @@ class Company extends Model
         }
         return DB::table('companies_foods')->where('type', '=', 'interest')
             ->whereIn('food_id', $availableFoods->pluck('id'))
-//            ->whereIn('unit_id', $availableFoods->pluck('pivot.unit_id'))
-//            ->where('amount', '<=', $this->availableFoods()->max('amount') ?? 0)
+            ->get();
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Collection|null $interestFoods
+     * @return Collection
+     */
+    final public function compatibleReceptions(?\Illuminate\Database\Eloquent\Collection $interestFoods = null): Collection
+    {
+        if (null === $interestFoods) {
+            $interestFoods = $this->interestFoods()->get();
+        }
+        return DB::table('companies_foods')->where('type', '=', 'available')
+            ->whereIn('food_id', $interestFoods->pluck('id'))
             ->get();
     }
 
