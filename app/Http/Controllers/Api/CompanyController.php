@@ -160,7 +160,7 @@ class CompanyController extends Controller
     {
         $donations = $company->compatibleDonations();
         $companies = Company::with(['interestFoods' => static function ($query) use ($donations) {
-            $query->whereIn('companies_foods.id', $donations->pluck('id'));
+            $query->with('units')->whereIn('companies_foods.id', $donations->pluck('id'));
         }])->whereIn('id', $donations->pluck('company_id'))->get()
             ->map(static function (Company $c) use ($company) {
                 $distance = GeoLocationService::distanceBetweenTowCoordinates(
@@ -180,7 +180,7 @@ class CompanyController extends Controller
     {
         $receptions = $company->compatibleReceptions();
         $companies = Company::with(['availableFoods' => static function ($query) use ($receptions) {
-            $query->whereIn('companies_foods.id', $receptions->pluck('id'));
+            $query->with('units')->whereIn('companies_foods.id', $receptions->pluck('id'));
         }])->whereIn('id', $receptions->pluck('company_id'))->get()
             ->map(static function (Company $c) use ($company) {
                 $distance = GeoLocationService::distanceBetweenTowCoordinates(
