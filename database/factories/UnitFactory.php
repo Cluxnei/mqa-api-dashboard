@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class UnitFactory extends Factory
 {
-    private const UNITS_NAMES = ['Kilogramas', 'Unidades', 'Gramas', 'Litros', 'Toneladas'];
+    private const UNITS_NAMES = ['Quilogramas', 'Unidades', 'Gramas', 'Litros', 'Toneladas'];
     /**
      * The name of the factory's corresponding model.
      *
@@ -29,7 +29,7 @@ class UnitFactory extends Factory
         return [
             'unit' => $unit,
             'slug' => Str::slug($unit),
-            'deleted_at' => random_int(1, 5) === 5 ? now() : null,
+            // 'deleted_at' => random_int(1, 5) === 5 ? now() : null,
         ];
     }
 }

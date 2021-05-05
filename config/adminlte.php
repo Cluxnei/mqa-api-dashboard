@@ -239,6 +239,16 @@ return [
             'url' => 'dashboard/companies',
             'icon' => 'fas fa-fw fa-building',
         ],
+        [
+            'text' => 'units',
+            'url' => 'dashboard/units',
+            'icon' => 'fas fa-fw fa-clipboard-list',
+        ],
+        [
+            'text' => 'foods',
+            'url' => 'dashboard/foods',
+            'icon' => 'fas fa-fw fa-utensils',
+        ],
     ],
 
     /*

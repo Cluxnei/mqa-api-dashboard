@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -32,6 +33,16 @@ class Food extends Model
             ->withPivot('deleted_at')
             ->withTimestamps();
         return !$withTrashed ? $builder->wherePivotNull('deleted_at') : $builder;
+    }
+
+    final public function approvedByAdmin(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by', 'id');
+    }
+
+    final public function requestedByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requested_by', 'id');
     }
 
     final public function scopeApproved(Builder $builder, bool $approved = true): Builder

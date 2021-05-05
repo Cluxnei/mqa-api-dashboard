@@ -24,7 +24,7 @@
                             <th {!! $paginator('phone')->full !!}>{{ __('phone') }}</th>
                             <th {!! $paginator('cpf')->full !!}>{{ __('cpf') }}</th>
                             <th {!! $paginator('companies_count')->full !!}>{{ __('companies') }}</th>
-                            <th {!! $paginator('is_admin')->full !!}>{{ __('is admin') }}</th>
+                            <th {!! $paginator('is_admin')->full !!}>{{ __('is admin?') }}</th>
                         </tr>
                         </thead>
                         <tbody>
