@@ -33,7 +33,7 @@
                         </thead>
                         <tbody>
                         @foreach($companies as $company)
-                            <tr>
+                            <tr class="{{ $company->isActive() ? '' : 'bg-inactive' }}">
                                 <td>
                                     <a href="{{ route('dashboard.companies.show', $company->id) }}"
                                        class="btn btn-pink">

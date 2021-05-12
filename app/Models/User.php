@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
+use JsonException;
 use Laravel\Passport\HasApiTokens;
 
 /**
@@ -47,6 +49,7 @@ class User extends Authenticatable
         'phone',
         'email',
         'password',
+        'history',
     ];
 
     /**
@@ -97,5 +100,22 @@ class User extends Authenticatable
         return $builder->where('active', '=', $active ? 1 : 0);
     }
 
+    final public function getParsedHistory(): Collection
+    {
+        $raw = $this->history;
+        if ($raw === null || $raw === '') {
+            return collect([]);
+        }
+        try {
+            return collect(json_decode($raw, false, 512, JSON_THROW_ON_ERROR));
+        } catch (JsonException $exception) {
+            return collect([]);
+        }
+    }
+
+    final public function saveParsedHistory(Collection $history): bool
+    {
+        return $this->update(['history' => $history->toJson()]);
+    }
 
 }

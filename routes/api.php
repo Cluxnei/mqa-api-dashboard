@@ -9,7 +9,7 @@ Route::prefix('v1')->group(static function () {
     Route::post('/email-confirmation', [AuthController::class, 'emailConfirmation']);
     Route::post('/email-code-verification', [AuthController::class, 'emailCodeVerification']);
     Route::post('/registration', [AuthController::class, 'registration']);
-    Route::middleware('auth:api')->group(static function () {
+//    Route::middleware('auth:api')->group(static function () {
         Route::post('get-company-data', [CompanyController::class, 'getData']);
         Route::apiResources([
             'company' => CompanyController::class,
@@ -24,6 +24,6 @@ Route::prefix('v1')->group(static function () {
         ]);
         Route::get('/company/closest-compatible-donations/{company}', [CompanyController::class, 'closestCompatibleDonations']);
         Route::get('/company/closest-compatible-receptions/{company}', [CompanyController::class, 'closestCompatibleReceptions']);
-    });
+//    });
 });
 

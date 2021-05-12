@@ -29,7 +29,7 @@
                         </thead>
                         <tbody>
                         @foreach($users as $user)
-                            <tr>
+                            <tr class="{{ $user->isActive() ? '' : 'bg-inactive' }}">
                                 <td>
                                     <a href="{{ route('dashboard.users.show', $user->id) }}" class="btn btn-pink">
                                         <i class="fas fa-eye"></i>

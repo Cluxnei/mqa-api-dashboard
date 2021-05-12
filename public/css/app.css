@@ -50418,4 +50418,8 @@ a.text-dark:focus {
     color: white;
 }
 
+.bg-inactive {
+    background-color: #dc354561;
+}
+
 

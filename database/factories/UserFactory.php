@@ -26,7 +26,7 @@ class UserFactory extends Factory
     {
         return [
             'is_admin' => random_int(0, 30) === 7 ? 1 : 0,
-            'name' => $this->faker->name,
+            'name' => str_replace(['`', '\'', '"'], ['', '', ''], $this->faker->name),
             'email' => $this->faker->unique()->email,
             'cpf' => $this->faker->unique()->numerify('###########'),
             'phone' => $this->faker->unique()->numerify('###########'),

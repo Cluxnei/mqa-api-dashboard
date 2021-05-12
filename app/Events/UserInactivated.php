@@ -24,6 +24,9 @@ class UserInactivated implements ShouldQueue
     public function __construct(User $user)
     {
         $this->user = $user;
+        $history = $user->getParsedHistory();
+        $history->add(['title' => 'user inactivated', 'date' => now()->toISOString()]);
+        $user->saveParsedHistory($history);
     }
 
     /**

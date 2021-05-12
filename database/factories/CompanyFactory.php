@@ -24,7 +24,7 @@ class CompanyFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name,
+            'name' => str_replace(['`', '\'', '"'], ['', '', ''], $this->faker->name),
             'cnpj' => $this->faker->unique()->numerify('##############'),
             'zipcode' => $this->faker->numerify('########'),
             'email' => $this->faker->email,

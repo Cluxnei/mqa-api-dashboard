@@ -90,9 +90,14 @@
   background-color: $pink;
   color: white;
   transition: scale 400ms ease-in-out;
+
   &:hover {
     background-color: $dark-pink;
     transform: scale(1.1);
     color: white;
   }
+}
+
+.bg-inactive {
+  background-color: #dc354561;
 }

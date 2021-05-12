@@ -43,10 +43,10 @@
                     <h3 class="card-title">{{ __('about') }}</h3>
                 </div>
                 <div class="card-body">
-                    <strong><i class="fas fa-stop-circle mr-1"></i> {{ __('is admin') }}?</strong>
+                    <strong><i class="fas fa-stop-circle mr-1"></i> {{ __('is admin?') }}</strong>
                     <p class="text-light">{{ __($user->isAdmin() ? 'yes' : 'no') }}</p>
                     <hr>
-                    <strong><i class="fas fa-circle-notch mr-1"></i> {{ __('is active') }}?</strong>
+                    <strong><i class="fas fa-circle-notch mr-1"></i> {{ __('is active?') }}</strong>
                     <p class="text-light">{{ __($user->isActive() ? 'yes' : 'no') }}</p>
                     <hr>
                     <strong><i class="fas fa-book mr-1"></i> {{ __('cpf') }}</strong>
@@ -65,7 +65,8 @@
             <div class="card">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
-                        <li class="nav-item"><a class="nav-lin active" href="#timeline" data-toggle="tab">Timeline</a>
+                        <li class="nav-item"><a class="nav-lin active" href="#timeline"
+                                                data-toggle="tab">{{ __('timeline') }}</a>
                         </li>
                     </ul>
                 </div>

@@ -77,5 +77,14 @@
     "units": "unidades de medida",
     "approved?": "aprovado?",
     "approved by": "aprovado por",
-    "requested by": "solicitado por"
+    "requested by": "solicitado por",
+    "user signed up": "usuário cadastrou-se",
+    "timeline": "linha do tempo",
+    "this users is inactive": "este usuário está inativo",
+    "alert": "alerta",
+    "inactive user": "inativar usuário",
+    "active user": "ativar usuário",
+    "is active?": "está ativo?",
+    "user activated": "usuário ativado",
+    "user inactivated": "usuário inativado"
 }

@@ -29,6 +29,8 @@ class TimelineService
     {
         $events = collect([]);
         $events->add(self::formatEvent(__('user signed up'), $user->created_at));
+        $map = static fn(object $event) => self::formatEvent(__($event->title), $event->date);
+        $events = $events->merge($user->getParsedHistory()->map($map));
         return $events->sortByDesc('date');
     }
 
