@@ -86,5 +86,8 @@
     "active user": "ativar usuário",
     "is active?": "está ativo?",
     "user activated": "usuário ativado",
-    "user inactivated": "usuário inativado"
+    "user inactivated": "usuário inativado",
+    "add new food": "adicionar novo alimento",
+    "add food": "adicionar alimento",
+    "submit": "enviar"
 }

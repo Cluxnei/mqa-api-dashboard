@@ -12,6 +12,10 @@
             <div class="card bg-dark">
                 <div class="card-header">
                     <h3 class="card-title">{{ __('total foods') }}</h3>
+                    <a href="{{ route('dashboard.foods.create') }}" class="float-right btn btn-success">
+                        <i class="fas fa-plus pr-1"></i>
+                        {{ __('add food') }}
+                    </a>
                 </div>
                 <div class="card-body table-responsive p-0">
                     <table class="table table-hover table-dark text-nowrap table-with-sort">

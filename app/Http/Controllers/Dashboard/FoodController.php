@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Dashboard\StoreFoodRequest;
 use App\Models\Food;
+use App\Models\Unit;
 use App\Services\PaginationService;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
@@ -23,22 +25,21 @@ class FoodController extends Controller
         return view('dashboard.foods.index', compact('foods', 'paginator'));
     }
 
-//    final public function show(Company $company): Renderable
-//    {
-//        $company->load('users');
-//        $timeline = TimelineService::fromCompany($company);
-//        return view('dashboard.companies.show', compact('company', 'timeline'));
-//    }
-//
-//    final public function active(Company $company): RedirectResponse
-//    {
-//        $company->update(['active' => 1]);
-//        return redirect()->route('dashboard.companies.show', $company->id);
-//    }
-//
-//    final public function inactive(Company $company): RedirectResponse
-//    {
-//        $company->update(['active' => 0]);
-//        return redirect()->route('dashboard.companies.show', $company->id);
-//    }
+    final public function create(): Renderable
+    {
+        $units = Unit::all();
+        return view('dashboard.foods.create', compact('units'));
+    }
+
+    final public function store(StoreFoodRequest $request)
+    {
+        $food = Food::query()->create([
+            'name' => $request->name,
+            'approved' => 1,
+            'approved_by' => auth()->id(),
+            'requested_by' => auth()->id(),
+        ]);
+        $food->units()->sync($request->units);
+        return redirect()->route('dashboard.foods.index');
+    }
 }

@@ -12,6 +12,8 @@ try {
     require('overlayscrollbars');
     require('../../vendor/almasaeed2010/adminlte/dist/js/adminlte');
     require('bootstrap');
+    require('sweetalert2');
+    require('select2');
 } catch (e) {}
 
 /**

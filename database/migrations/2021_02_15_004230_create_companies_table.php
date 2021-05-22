@@ -29,6 +29,7 @@ class CreateCompaniesTable extends Migration
             $table->string('country');
             $table->float('latitude')->nullable();
             $table->float('longitude')->nullable();
+            $table->json('history')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
