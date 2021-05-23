@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use App\Models\Food;
-use App\Models\Unit;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Seeder;
@@ -28,21 +27,14 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('dev'),
         ]);
         $users = User::factory()->count(10)->create();
-        $units = Unit::factory()->count(5)->create();
-        $foods = Food::factory()->count(10)->create();
+        $this->call([UnitsTableSeeder::class, FoodsTableSeeder::class]);
         $companies = Company::factory()->count(10)->create();
-
-        $foods->each(static function (Food $food) use ($units) {
-            $units->each(static function (Unit $unit) use ($food) {
-                $food->units()->attach($unit->id);
-            });
-        });
-
+        $foods = Food::withTrashed()->get();
         $companies->each(static function (Company $company) use ($foods, $users) {
             $users->random(random_int(1, 4))->each(static function (User $user) use ($company) {
                 $company->users()->attach($user->id);
             });
-            $foods->each(static function (Food $food) use ($company) {
+            $foods->random(random_int(1, 30))->each(static function (Food $food) use ($company) {
                 $unit = $food->units(true)->inRandomOrder()->limit(1)->first();
                 $user = $company->users(true)->inRandomOrder()->limit(1)->first();
                 if (null === $unit || null === $user) {

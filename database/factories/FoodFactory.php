@@ -25,14 +25,14 @@ class FoodFactory extends Factory
      */
     public function definition(): array
     {
-        $approved = (bool)random_int(0, 1);
+        $approved = random_int(0, 1);
         return [
             'name' => $this->faker->unique()->randomElement(self::FOOD_NAMES),
             'approved' => $approved,
             'approved_by' => $approved
                 ? User::admin()->inRandomOrder()->limit(1)->first()->id
                 : null,
-            'requested_by' => (bool)random_int(0, 1)
+            'requested_by' => random_int(0, 1)
                 ? User::query()->inRandomOrder()->limit(1)->first()->id
                 : null,
             'deleted_at' => random_int(1, 5) === 5 ? now() : null,

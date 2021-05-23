@@ -16,6 +16,7 @@ class CreateFoodsTable extends Migration
         Schema::create('foods', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('category')->nullable();
             $table->boolean('approved')->default(false);
             $table->foreignId('approved_by')->nullable()->constrained('users');
             $table->foreignId('requested_by')->nullable()->constrained('users');
