@@ -49,7 +49,7 @@ class AuthController extends Controller
                 ]);
             },
         ]);
-        $user->setAttribute('foods', Food::approved()->with('units')->get());
+        $user->setAttribute('foods', Food::approved()->with('units')->limit(30)->get());
         return response()->json(compact('user', 'token'));
     }
 

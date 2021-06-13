@@ -80,10 +80,10 @@ class CompanyController extends Controller
     {
         $companies = $request->user()->companies()->with([
             'interestFoods' => static function ($query) {
-                $query->with('units');
+                $query->limit(30)->with('units');
             },
             'availableFoods' => static function ($query) {
-                $query->with('units');
+                $query->limit(30)->with('units');
             },
         ]);
         return CompanyResource::collection($companies->get()->unique('id'));
