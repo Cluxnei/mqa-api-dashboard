@@ -38,6 +38,14 @@ Route::prefix('v1')->group(static function () {
            CompanyController::class,
            'removeAvailableItem'
        ]);
+       Route::post('/company/store-donation/{company}', [
+           CompanyController::class,
+           'storeDonation'
+       ]);
+       Route::post('/company/store-reception/{company}', [
+           CompanyController::class,
+           'storeReception'
+       ]);
        Route::get('/company/closest-compatible-donations/{company}', [CompanyController::class, 'closestCompatibleDonations']);
        Route::get('/company/closest-compatible-receptions/{company}', [CompanyController::class, 'closestCompatibleReceptions']);
    });

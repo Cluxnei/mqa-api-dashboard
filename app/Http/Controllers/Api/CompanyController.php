@@ -9,6 +9,7 @@ use App\Http\Requests\StoreCompanyItemRequest;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Resources\CompanyResource;
 use App\Models\Company;
+use App\Models\Donation;
 use App\Models\Food;
 use App\Services\GeoLocationService;
 use Exception;
@@ -293,5 +294,41 @@ class CompanyController extends Controller
             $companies->add($companyParser($c));
         }
         return response()->json($companies->sortBy('distanceInKilometers')->sortByDesc('items_length')->values());
+    }
+
+    final public function storeDonation(Request $request, Company $company): JsonResponse
+    {
+        $donation = Donation::create([
+            'type' => 'donation',
+            'from_company_id' => $company->id,
+            'to_company_id' => $request->to_company_id,
+        ]);
+        if (!$donation) {
+            return response()->json(['success' => false, 'message' => 'Erro ao registrar doação']);
+        }
+        $donation->items()->createMany(collect($request->items)->map(static fn(array $item) => [
+            'unit_id' => $item['unit_id'],
+            'amount' => $item['amount'],
+            'food_id' => $item['food_id'],
+        ]));
+        return response()->json(['success' => true, 'message' => ''], Response::HTTP_CREATED);
+    }
+
+    final public function storeReception(Request $request, Company $company): JsonResponse
+    {
+        $reception = Donation::create([
+            'type' => 'reception',
+            'from_company_id' => $company->id,
+            'to_company_id' => $request->to_company_id,
+        ]);
+        if (!$reception) {
+            return response()->json(['success' => false, 'message' => 'Erro ao registrar recepção']);
+        }
+        $reception->items()->createMany(collect($request->items)->map(static fn(array $item) => [
+            'unit_id' => $item['unit_id'],
+            'amount' => $item['amount'],
+            'food_id' => $item['food_id'],
+        ]));
+        return response()->json(['success' => true, 'message' => ''], Response::HTTP_CREATED);
     }
 }
