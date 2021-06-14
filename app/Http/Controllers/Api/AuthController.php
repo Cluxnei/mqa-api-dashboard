@@ -21,18 +21,6 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    private const userExceptFields = ['history', 'created_at', 'updated_at', 'deleted_at', 'email_verified_at', 'phone_verified_at'];
-    private const foodExceptFields = ['pivot', 'created_at', 'updated_at', 'deleted_at', 'approved_by', 'requested_by', 'approved', 'category'];
-    private const companyExceptFields = ['created_at', 'updated_at', 'deleted_at', 'history', 'pivot'];
-
-    private static function optimizeArray(array $array, array $exceptFields): array
-    {
-        foreach ($exceptFields as $key) {
-            unset($array[$key]);
-        }
-        return $array;
-    }
-
     /**
      * @param LoginRequest $request
      * @return JsonResponse
@@ -47,42 +35,74 @@ class AuthController extends Controller
             return response()->json(['message' => 'Usuário em aprovação'], Response::HTTP_UNAUTHORIZED);
         }
         $token = $user->createToken('AuthToken');
-        $companies = $user->companies()->with([
-            'interestFoods' => static fn($query) => $query->where('approved', '=', 1)->with('units:id'),
-            'availableFoods' => static fn($query) => $query->where('approved', '=', 1)->with('units:id'),
-        ])->get()->map(static function (Company $company) {
-            $interestFoods = $company->interestFoods->map(static fn(Food $food): array => [
-                'food_id' => $food->pivot->food_id,
-                'amount' => $food->pivot->amount,
-                'unity_id' => $food->pivot->unit_id,
-            ]);
-            $availableFoods = $company->availableFoods->map(static fn(Food $food): array => [
-                'food_id' => $food->pivot->food_id,
-                'amount' => $food->pivot->amount,
-                'unity_id' => $food->pivot->unit_id,
-            ]);
-            $company->setAttribute('_interest_foods', $interestFoods)->setAttribute('_available_foods', $availableFoods);
-            $c = $company->toArray();
-            unset($c['interest_foods'], $c['available_foods']);
-            return self::optimizeArray($c, self::companyExceptFields);
-        });
-        $units = Unit::query()->select('id', 'unit', 'slug')->get(['id', 'unit', 'slug'])->toArray();
-        $foods = Food::approved()->with('units:id')->get()->map(
-            static function (Food $food) {
-                $units = $food->units->pluck('id')->values()->toArray();
-                $f = $food->setAttribute('_units', $units)->toArray();
-                unset($f['units']);
-                return self::optimizeArray($f, self::foodExceptFields);
-            }
-        );
-        $user->setAttribute('_foods', $foods)->setAttribute('_units', $units)->setAttribute('_companies', $companies);
-        return response()->json([
-            'user' => self::optimizeArray($user->toArray(), self::userExceptFields),
-            'token' => [
-                'accessToken' => $token->accessToken,
-                'expires_at' => $token->token->expires_at
-            ]
-        ]);
+        $token = [
+            'accessToken' => $token->accessToken,
+            'expires_at' => $token->token->expires_at
+        ];
+        $itemFoodParser = static fn(Food $food): array => [
+            'food_id' => $food->pivot->food_id,
+            'amount' => $food->pivot->amount,
+            'unit_id' => $food->pivot->unit_id,
+        ];
+        $companyParser = static fn(Company $company): array => [
+            'id' => $company->id,
+            'active' => $company->active,
+            'name' => $company->name,
+            'cnpj' => $company->cnpj,
+            'phone' => $company->phone,
+            'email' => $company->email,
+            'zipcode' => $company->zipcode,
+            'street' => $company->street,
+            'neighborhood' => $company->neighborhood,
+            'address_number' => $company->address_number,
+            'city' => $company->city,
+            'state' => $company->state,
+            'country' => $company->country,
+            'latitude' => $company->latitude,
+            'longitude' => $company->longitude,
+            'interest_foods' => $company->interestFoods->map($itemFoodParser),
+            'available_foods' => $company->availableFoods->map($itemFoodParser),
+        ];
+        $foodParser = static fn(Food $food): array => [
+            'units' => $food->units->pluck('id')->toArray(),
+            'id' => $food->id,
+            'name' => $food->name,
+        ];
+        $unitParser = static fn(Unit $unit): array => [
+            'id' => $unit->id,
+            'unit' => $unit->unit,
+            'slug' => $unit->slug,
+        ];
+        $companies = [];
+        foreach ($user->companies()->with([
+            'interestFoods' => static fn($query) => $query->select('foods.id', 'name', 'approved')->where('approved', '=', 1),
+            'availableFoods' => static fn($query) => $query->select('foods.id', 'name', 'approved')->where('approved', '=', 1),
+        ])->get() as $company) {
+            $companies[] = $companyParser($company);
+        }
+        $user = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'cpf' => $user->cpf,
+            'email' => $user->email,
+            'gender' => $user->gender,
+            'phone' => $user->phone,
+            'companies' => $companies,
+        ];
+        unset($companies);
+        $units = [];
+        foreach (Unit::query()->select('id', 'unit', 'slug')->get() as $unit) {
+            $units[] = $unitParser($unit);
+        }
+        $user['units'] = $units;
+        unset($units);
+        $foods = [];
+        foreach (Food::approved()->select('id', 'approved', 'name')->with('units:id')->get() as $food) {
+            $foods[] = $foodParser($food);
+        }
+        $user['foods'] = $foods;
+        unset($foods);
+        return response()->json(compact('user', 'token'));
     }
 
     /**

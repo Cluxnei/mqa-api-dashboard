@@ -22,6 +22,22 @@ Route::prefix('v1')->group(static function () {
            CompanyController::class,
            'storeInterestItem'
        ]);
+       Route::post('/company/update-interest-item/{company}', [
+           CompanyController::class,
+           'updateInterestItem'
+       ]);
+       Route::post('/company/update-available-item/{company}', [
+           CompanyController::class,
+           'updateAvailableItem'
+       ]);
+       Route::post('/company/remove-interest-item/{company}', [
+           CompanyController::class,
+           'removeInterestItem'
+       ]);
+       Route::post('/company/remove-available-item/{company}', [
+           CompanyController::class,
+           'removeAvailableItem'
+       ]);
        Route::get('/company/closest-compatible-donations/{company}', [CompanyController::class, 'closestCompatibleDonations']);
        Route::get('/company/closest-compatible-receptions/{company}', [CompanyController::class, 'closestCompatibleReceptions']);
    });

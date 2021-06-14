@@ -9,6 +9,7 @@ use App\Http\Requests\StoreCompanyItemRequest;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Resources\CompanyResource;
 use App\Models\Company;
+use App\Models\Food;
 use App\Services\GeoLocationService;
 use Exception;
 use GuzzleHttp\Client;
@@ -139,7 +140,7 @@ class CompanyController extends Controller
      */
     final public function storeInterestItem(StoreCompanyItemRequest $request, Company $company): JsonResponse
     {
-        $company->availableFoods()->attach($request->food_id, [
+        $company->interestFoods()->attach($request->food_id, [
             'company_id' => $company->id,
             'unit_id' => $request->unit_id,
             'requested_by' => $request->user()->id,
@@ -153,23 +154,105 @@ class CompanyController extends Controller
     }
 
     /**
+     * @param StoreCompanyItemRequest $request
+     * @param Company $company
+     * @return JsonResponse
+     */
+    final public function updateAvailableItem(StoreCompanyItemRequest $request, Company $company): JsonResponse
+    {
+        $company->availableFoods()->findOrFail($request->food_id)->update([
+            'unit_id' => $request->unit_id,
+            'amount' => $request->amount,
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => '',
+        ]);
+    }
+
+    /**
+     * @param StoreCompanyItemRequest $request
+     * @param Company $company
+     * @return JsonResponse
+     */
+    final public function updateInterestItem(StoreCompanyItemRequest $request, Company $company): JsonResponse
+    {
+        $company->interestFoods()->findOrFail($request->food_id)->update([
+            'unit_id' => $request->unit_id,
+            'amount' => $request->amount,
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => '',
+        ]);
+    }
+
+    /**
+     * @param StoreCompanyItemRequest $request
+     * @param Company $company
+     * @return JsonResponse
+     */
+    final public function removeAvailableItem(StoreCompanyItemRequest $request, Company $company): JsonResponse
+    {
+        $alreadyHas = $company->availableFoods()->find($request->food_id);
+        return response()->json([
+            'success' => !$alreadyHas || $company->availableFoods()->detach($request->food_id) > 0,
+            'message' => '',
+        ]);
+    }
+
+    /**
+     * @param StoreCompanyItemRequest $request
+     * @param Company $company
+     * @return JsonResponse
+     */
+    final public function removeInterestItem(StoreCompanyItemRequest $request, Company $company): JsonResponse
+    {
+        $alreadyHas = $company->interestFoods()->find($request->food_id);
+        return response()->json([
+            'success' => !$alreadyHas || $company->interestFoods()->detach($request->food_id) > 0,
+            'message' => '',
+        ]);
+    }
+
+    /**
      * @param Company $company
      * @return JsonResponse
      */
     final public function closestCompatibleDonations(Company $company): JsonResponse
     {
+        $itemFoodParser = static fn(Food $food): array => [
+            'food_id' => $food->pivot->food_id,
+            'amount' => $food->pivot->amount,
+            'unit_id' => $food->pivot->unit_id,
+        ];
+        $companyParser = static fn(Company $cmpy): array => [
+            'id' => $cmpy->id,
+            'name' => $cmpy->name,
+            'cnpj' => $cmpy->cnpj,
+            'phone' => $cmpy->phone,
+            'email' => $cmpy->email,
+            'street' => $cmpy->street,
+            'neighborhood' => $cmpy->neighborhood,
+            'address_number' => $cmpy->address_number,
+            'city' => $cmpy->city,
+            'state' => $cmpy->state,
+            'distanceInKilometers' => $cmpy->distanceInKilometers,
+            'interest_foods' => $cmpy->interestFoods->map($itemFoodParser),
+        ];
         $donations = $company->compatibleDonations();
-        $companies = Company::with(['interestFoods' => static function ($query) use ($donations) {
+        $companies = collect([]);
+        foreach (Company::with(['interestFoods' => static function ($query) use ($donations) {
             $query->with('units')->whereIn('companies_foods.id', $donations->pluck('id'));
-        }])->whereIn('id', $donations->pluck('company_id'))->get()
-            ->map(static function (Company $c) use ($company) {
-                $distance = GeoLocationService::distanceBetweenTowCoordinates(
-                    $c->latitude, $c->longitude, $company->latitude, $company->longitude
-                );
-                $c->setAttribute('distanceInKilometers', $distance);
-                return $c;
-            })->sortBy('distanceInKilometers');
-        return response()->json($companies->values());
+        }])->whereIn('id', $donations->pluck('company_id'))->get() as $c) {
+            $distance = GeoLocationService::distanceBetweenTowCoordinates(
+                $c->latitude, $c->longitude, $company->latitude, $company->longitude
+            );
+            $c->setAttribute('distanceInKilometers', $distance);
+            $c->setAttribute('items_length', $c->interestFoods->count());
+            $companies->add($companyParser($c));
+        }
+        return response()->json($companies->sortBy('distanceInKilometers')->sortByDesc('items_length')->values());
     }
 
     /**
@@ -178,17 +261,37 @@ class CompanyController extends Controller
      */
     final public function closestCompatibleReceptions(Company $company): JsonResponse
     {
+        $itemFoodParser = static fn(Food $food): array => [
+            'food_id' => $food->pivot->food_id,
+            'amount' => $food->pivot->amount,
+            'unit_id' => $food->pivot->unit_id,
+        ];
+        $companyParser = static fn(Company $cmpy): array => [
+            'id' => $cmpy->id,
+            'name' => $cmpy->name,
+            'cnpj' => $cmpy->cnpj,
+            'phone' => $cmpy->phone,
+            'email' => $cmpy->email,
+            'street' => $cmpy->street,
+            'neighborhood' => $cmpy->neighborhood,
+            'address_number' => $cmpy->address_number,
+            'city' => $cmpy->city,
+            'state' => $cmpy->state,
+            'distanceInKilometers' => $cmpy->distanceInKilometers,
+            'available_foods' => $cmpy->availableFoods->map($itemFoodParser),
+        ];
         $receptions = $company->compatibleReceptions();
-        $companies = Company::with(['availableFoods' => static function ($query) use ($receptions) {
+        $companies = collect([]);
+        foreach (Company::with(['availableFoods' => static function ($query) use ($receptions) {
             $query->with('units')->whereIn('companies_foods.id', $receptions->pluck('id'));
-        }])->whereIn('id', $receptions->pluck('company_id'))->get()
-            ->map(static function (Company $c) use ($company) {
-                $distance = GeoLocationService::distanceBetweenTowCoordinates(
-                    $c->latitude, $c->longitude, $company->latitude, $company->longitude
-                );
-                $c->setAttribute('distanceInKilometers', $distance);
-                return $c;
-            })->sortBy('distanceInKilometers');
-        return response()->json($companies->values());
+        }])->whereIn('id', $receptions->pluck('company_id'))->get() as $c) {
+            $distance = GeoLocationService::distanceBetweenTowCoordinates(
+                $c->latitude, $c->longitude, $company->latitude, $company->longitude
+            );
+            $c->setAttribute('distanceInKilometers', $distance);
+            $c->setAttribute('items_length', $c->availableFoods->count());
+            $companies->add($companyParser($c));
+        }
+        return response()->json($companies->sortBy('distanceInKilometers')->sortByDesc('items_length')->values());
     }
 }
